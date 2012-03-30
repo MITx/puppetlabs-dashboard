@@ -99,6 +99,7 @@ class dashboard (
         mode    => "0644",
         require => [ Package[$dashboard_package], User[$dashboard_user] ],
         before  => Service[$dashboard_worker_service]
+      }
     }
   }
 
