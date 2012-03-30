@@ -71,6 +71,37 @@ class dashboard (
     package_name     => $dashboard::params::ruby_mysql_package,
   }
 
+  case $::operatingsystem {
+    'centos','redhat','oel': {
+      file { '/etc/sysconfig/puppet-dashboard':
+        ensure  => present,
+        content => template('dashboard/puppet-dashboard-sysconfig'),
+        owner   => '0',
+        group   => '0',
+        mode    => '0644',
+        require => [ Package[$dashboard_package], User[$dashboard_user] ],
+      }
+    }
+    'debian','ubuntu': {
+      file { '/etc/default/puppet-dashboard':
+        ensure  => present,
+        content => template('dashboard/puppet-dashboard.default.erb'),
+        owner   => '0',
+        group   => '0',
+        mode    => '0644',
+        require => [ Package[$dashboard_package], User[$dashboard_user] ],
+      }
+      file { '/etc/default/puppet-dashboard-workers':
+        ensure  => present,
+        content => template('dashboard/puppet-dashboard-workers.default.erb'),
+        owner   => "root",
+        group   => "root",
+        mode    => "0644",
+        require => [ Package[$dashboard_package], User[$dashboard_user] ],
+        before  => Service[$dashboard_worker_service]
+    }
+  }
+
   if $passenger {
     Class['mysql']
     -> Class['mysql::ruby']
@@ -96,30 +127,7 @@ class dashboard (
     -> Exec['db-migrate']
     -> Service[$dashboard_service]
 
-    case $::operatingsystem {
-      'centos','redhat','oel': {
-        file { '/etc/sysconfig/puppet-dashboard':
-          ensure  => present,
-          content => template('dashboard/puppet-dashboard-sysconfig'),
-          owner   => '0',
-          group   => '0',
-          mode    => '0644',
-          require => [ Package[$dashboard_package], User[$dashboard_user] ],
-          before  => Service[$dashboard_service],
-        }
-      }
-      'debian','ubuntu': {
-        file { '/etc/default/puppet-dashboard':
-          ensure  => present,
-          content => template('dashboard/puppet-dashboard.default.erb'),
-          owner   => '0',
-          group   => '0',
-          mode    => '0644',
-          require => [ Package[$dashboard_package], User[$dashboard_user] ],
-          before  => Service[$dashboard_service],
-        }
-      }
-    }
+    File['/etc/default/puppet-dashboard'] -> Service[$dashboard_service]
 
     service { $dashboard_service:
       ensure     => running,
@@ -128,6 +136,12 @@ class dashboard (
       subscribe  => File['/etc/puppet-dashboard/database.yml'],
       require    => Exec['db-migrate']
     }
+  }
+
+  service { $dashboard_worker_service:
+    ensure     => running,
+    enable     => true,
+    hasrestart => true,
   }
 
   package { $dashboard_package:
@@ -161,7 +175,8 @@ class dashboard (
     target => '/etc/puppet-dashboard/database.yml',
   }
 
-  file { [ "${dashboard::params::dashboard_root}/log/production.log", "${dashboard::params::dashboard_root}/config/environment.rb" ]:
+  file { [ "${dashboard::params::dashboard_root}/log/production.log",
+           "${dashboard::params::dashboard_root}/config/environment.rb" ]:
     ensure => file,
     mode   => '0644',
   }

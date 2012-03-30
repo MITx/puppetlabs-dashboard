@@ -26,19 +26,6 @@ class dashboard::passenger (
     ensure => absent,
   }
 
-  case $::operatingsystem {
-    'centos','redhat','oel': {
-      file { '/etc/sysconfig/puppet-dashboard':
-        ensure => absent,
-      }
-    }
-    'debian','ubuntu': {
-      file { '/etc/default/puppet-dashboard':
-        ensure => absent,
-      }
-    }
-  }
-
   apache::vhost { $dashboard_site:
     port     => '8080',
     priority => '50',

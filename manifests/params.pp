@@ -24,6 +24,7 @@ class dashboard::params {
   $passenger             = 'false'
   $mysql_root_pw         = 'changemetoo'
   $rails_base_uri        = '/'
+  $worker_count          = "$::processorcount"
 
   case $::operatingsystem {
     'centos', 'redhat', 'fedora': {
@@ -34,11 +35,12 @@ class dashboard::params {
       $ruby_mysql_package     = 'ruby-mysql'
     }
     'ubuntu', 'debian': {
-      $dashboard_service      = 'puppet-dashboard'
-      $dashboard_package      = 'puppet-dashboard'
-      $dashboard_root         = '/usr/share/puppet-dashboard'
-      $mysql_package_provider = 'aptitude'
-      $ruby_mysql_package     = 'libmysql-ruby1.8'
+      $dashboard_service        = 'puppet-dashboard'
+      $dashboard_worker_service = 'puppet-dashboard-workers'
+      $dashboard_package        = 'puppet-dashboard'
+      $dashboard_root           = '/usr/share/puppet-dashboard'
+      $mysql_package_provider   = 'aptitude'
+      $ruby_mysql_package       = 'libmysql-ruby1.8'
     }
   }
 
