@@ -141,7 +141,11 @@ class dashboard (
     group   => $dashboard_group,
   }
 
-  file { [ "${dashboard::params::dashboard_root}/public", "${dashboard::params::dashboard_root}/tmp", "${dashboard::params::dashboard_root}/log", '/etc/puppet-dashboard' ]:
+  file { [ "${dashboard::params::dashboard_root}/public",
+           "${dashboard::params::dashboard_root}/tmp",
+           "${dashboard::params::dashboard_root}/log",
+           "${dashboard::params::dashboard_root}/spool",
+           '/etc/puppet-dashboard' ]:
     ensure       => directory,
     recurse      => true,
     recurselimit => '1',
