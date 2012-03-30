@@ -20,9 +20,7 @@ class dashboard::passenger (
   Class ['::passenger']
   -> Apache::Vhost[$dashboard_site]
 
-  class { '::passenger':
-     port    => $dashboard_port,
-   }
+  class { '::passenger': }
 
   file { '/etc/init.d/puppet-dashboard':
     ensure => absent,
