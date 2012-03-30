@@ -28,7 +28,7 @@ class dashboard::passenger (
     ensure => absent,
   }
 
-  case $operatingsystem {
+  case $::operatingsystem {
     'centos','redhat','oel': {
       file { '/etc/sysconfig/puppet-dashboard':
         ensure => absent,

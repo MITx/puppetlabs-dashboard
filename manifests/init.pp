@@ -94,7 +94,7 @@ class dashboard (
     -> Exec['db-migrate']
     -> Service[$dashboard_service]
 
-    case $operatingsystem {
+    case $::operatingsystem {
       'centos','redhat','oel': {
         file { '/etc/sysconfig/puppet-dashboard':
           ensure  => present,

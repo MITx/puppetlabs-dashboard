@@ -25,7 +25,7 @@ class dashboard::params {
   $mysql_root_pw         = 'changemetoo'
   $rails_base_uri        = '/'
 
- case $operatingsystem {
+  case $::operatingsystem {
     'centos', 'redhat', 'fedora': {
       $dashboard_service      = 'puppet-dashboard'
       $dashboard_package      = 'puppet-dashboard'
@@ -40,6 +40,6 @@ class dashboard::params {
       $mysql_package_provider = 'aptitude'
       $ruby_mysql_package     = 'libmysql-ruby1.8'
     }
- }
+  }
 
 }
