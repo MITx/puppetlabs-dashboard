@@ -160,12 +160,19 @@ class dashboard (
            "${dashboard::params::dashboard_root}/tmp",
            "${dashboard::params::dashboard_root}/log",
            "${dashboard::params::dashboard_root}/spool",
-           "${dashboard::params::dashboard_root}/certs",
            '/etc/puppet-dashboard' ]:
     ensure       => directory,
     recurse      => true,
     recurselimit => '1',
   }
+
+  file {"${dashboard::params::dashboard_root}/certs":
+    ensure       => directory,
+    recurse      => true,
+    recurselimit => '1',
+    mode         => '0440'
+  }
+
 
   file {'/etc/puppet-dashboard/database.yml':
     ensure  => present,
